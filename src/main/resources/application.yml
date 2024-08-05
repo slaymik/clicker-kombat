@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: clicker-kombat
+
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        show_sql: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/clicker_kombat
+    username: postgres
+    password: 12qw23qw
+    driver-class-name: org.postgresql.Driver
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    root: info
