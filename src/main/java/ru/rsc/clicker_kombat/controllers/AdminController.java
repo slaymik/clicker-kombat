@@ -6,13 +6,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.rsc.clicker_kombat.model.domain.Admin;
 import ru.rsc.clicker_kombat.model.domain.User;
+import ru.rsc.clicker_kombat.model.requests.AdminRequest;
 import ru.rsc.clicker_kombat.model.responses.ActionResult;
+import ru.rsc.clicker_kombat.model.responses.EntityResponse;
 import ru.rsc.clicker_kombat.services.AdminService;
 import ru.rsc.clicker_kombat.services.CharacterService;
 import ru.rsc.clicker_kombat.services.UserService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @PreAuthorize("hasRole('ADMIN')")
@@ -29,8 +30,8 @@ public class AdminController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Map<String, Object>> getUserById(@RequestParam("id") String id) {
-        return ResponseEntity.ok(userService.getUserOrError(Long.parseLong(id)));
+    public ResponseEntity<EntityResponse> getUserById(@RequestParam("id") String id) {
+        return ResponseEntity.ok(userService.getUser(Long.parseLong(id)));
     }
 
     @GetMapping("/delete")
@@ -41,5 +42,10 @@ public class AdminController {
     @GetMapping("/get_all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/create_admin")
+    public ResponseEntity<EntityResponse> createAdmin(@RequestBody AdminRequest request){
+        return ResponseEntity.ok(adminService.createAdmin(request));
     }
 }

@@ -6,12 +6,15 @@ import ru.rsc.clicker_kombat.consts.XPConsts;
 import ru.rsc.clicker_kombat.model.domain.Character;
 import ru.rsc.clicker_kombat.model.requests.CharacterRequest;
 import ru.rsc.clicker_kombat.model.responses.ActionResult;
+import ru.rsc.clicker_kombat.model.responses.EntityResponse;
 import ru.rsc.clicker_kombat.repository.CharacterRepository;
 import ru.rsc.clicker_kombat.repository.UserRepository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+
+import static ru.rsc.clicker_kombat.consts.EntityResponseStatuses.ERROR;
+import static ru.rsc.clicker_kombat.consts.EntityResponseStatuses.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +23,7 @@ public class CharacterService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    public Map<String,Object> createCharacter(CharacterRequest request) {
-        Map<String,Object> map = new HashMap<>();
+    public EntityResponse createCharacter(CharacterRequest request) {
         Character character = Character.builder()
                 .name(request.getName())
                 .faction(request.getFaction())
@@ -34,28 +36,35 @@ public class CharacterService {
                 .upCoins(0L)
                 .build();
         characterRepository.save(character);
-        map.put("Created Character",character);
-        return map;
+        return EntityResponse.builder()
+                .status(SUCCESS)
+                .build();
     }
 
-    public Map<String,Object> getAllCharactersByUserId(Long id) {
-        if(userService.getUserOrError(id).containsKey("User")){
-            Map<String,Object> map = new HashMap<>();
+    public EntityResponse getAllCharactersByUserId(Long id) {
+        if(userService.getUser(id).getStatus().equals(SUCCESS)){
             List<Character> characterList = characterRepository.getCharactersByUser_Id(id);
-            map.put("Characters", characterList);
-            return map;
+            return EntityResponse.builder()
+                    .status(SUCCESS)
+                    .entity(characterList)
+                    .build();
         }else {
-            return userService.getUserOrError(id);
+            return userService.getUser(id);
         }
     }
 
-    public Map<String,Object> getCharacterOrError(Long id) {
-        Map<String,Object> map = new HashMap<>();
-        if(characterRepository.findById(id).isPresent())
-            map.put("Character",characterRepository.findById(id));
+    public EntityResponse getCharacter(Long id) {
+        Optional<Character> character = characterRepository.findById(id);
+        if(character.isPresent())
+            return EntityResponse.builder()
+                    .status(SUCCESS)
+                    .entity(character.orElseThrow())
+                    .build();
         else
-            map.put("Error","Персонаж с id:%s не найден".formatted(id));
-        return map;
+            return EntityResponse.builder()
+                    .status(ERROR)
+                    .message("Персонаж с id:%s не найден".formatted(id))
+                    .build();
     }
 
     public ActionResult deleteCharacter(Long id) {
@@ -69,8 +78,7 @@ public class CharacterService {
         return new ActionResult(false,"Пиздец произошел");
     }
 
-    public Map<String,Object> updateCharacter(CharacterRequest request) {
-        Map<String,Object> map = new HashMap<>();
+    public EntityResponse updateCharacter(CharacterRequest request) {
         Character existingCharacter = characterRepository.getReferenceById(request.getId());
         Character updatedCharacter = Character.builder()
                 .name(request.getName() == null ? existingCharacter.getName() : request.getName())
@@ -83,7 +91,9 @@ public class CharacterService {
                 .user(existingCharacter.getUser())
                 .build();
         characterRepository.save(updatedCharacter);
-        map.put("Updated Character",updatedCharacter);
-        return map;
+        return EntityResponse.builder()
+                .status(SUCCESS)
+                .entity(updatedCharacter)
+                .build();
     }
 }

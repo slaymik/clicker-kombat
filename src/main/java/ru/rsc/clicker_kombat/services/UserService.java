@@ -3,13 +3,16 @@ package ru.rsc.clicker_kombat.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.rsc.clicker_kombat.model.domain.User;
-import ru.rsc.clicker_kombat.model.responses.UserResponse;
+import ru.rsc.clicker_kombat.model.requests.UserRequest;
+import ru.rsc.clicker_kombat.model.responses.EntityResponse;
 import ru.rsc.clicker_kombat.repository.UserRepository;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+
+import static ru.rsc.clicker_kombat.consts.EntityResponseStatuses.ERROR;
+import static ru.rsc.clicker_kombat.consts.EntityResponseStatuses.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -20,16 +23,22 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Map<String,Object> getUserOrError(Long id) {
-        Map<String,Object> map = new HashMap<>();
-        if(userRepository.findById(id).isPresent())
-            map.put("User",userRepository.findById(id));
-        else
-            map.put("Error","Пользователь с id:%s не найден".formatted(id));
-        return map;
+    public EntityResponse getUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return EntityResponse.builder()
+                    .status(SUCCESS)
+                    .entity(user.orElseThrow())
+                    .build();
+        } else {
+            return EntityResponse.builder()
+                    .status(ERROR)
+                    .message("Пользователь с id:%s не найден".formatted(id))
+                    .build();
+        }
     }
 
-    public Map<String,Object> createUser(UserResponse response) {
+    public EntityResponse createUser(UserRequest response) {
         User user = User.builder()
                 .id(response.getId())
                 .username(response.getUsername())
@@ -40,6 +49,6 @@ public class UserService {
                 .characters(null)
                 .build();
         userRepository.save(user);
-        return getUserOrError(response.getId());
+        return getUser(response.getId());
     }
 }
