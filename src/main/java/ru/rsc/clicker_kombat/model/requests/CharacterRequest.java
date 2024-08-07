@@ -8,7 +8,7 @@ import ru.rsc.clicker_kombat.model.domain.Upgrades;
 public class CharacterRequest {
     Long id;
     String name;
-    String faction;
+    Long factionId;
     Short level;
     Long upCoins;
     Long currentXp;
