@@ -1,0 +1,28 @@
+package ru.rsc.clicker_kombat.model.domain;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Immutable;
+
+@Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Immutable
+@Table(name = "faction_profits")
+public class FactionProfit {
+    @Id
+    @Column(name = "faction_id")
+    private Long factionId;
+
+    @Column(name = "faction_name")
+    private String factionName;
+
+    @Column(name = "sum")
+    private Double profitSum;
+}

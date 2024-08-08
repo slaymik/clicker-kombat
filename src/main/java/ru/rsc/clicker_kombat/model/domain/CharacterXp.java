@@ -14,12 +14,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "character_xp")
 public class CharacterXp {
     @Id
-    @Column(name = "character_id")
-    private Long characterId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    Long id;
 
     @OneToOne
     @JoinColumn(name = "character_id", referencedColumnName = "id")
     private Character character;
+
+    @Column(name = "level")
+    private Short level;
 
     @Column(name = "current_xp")
     private Long currentXp;

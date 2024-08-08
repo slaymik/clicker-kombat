@@ -3,9 +3,8 @@ package ru.rsc.clicker_kombat.model.requests;
 import lombok.Value;
 
 @Value
-public class CharacterRequest {
-    Long id;
+public class FactionRequest {
     String name;
-    Long userId;
-    Long factionId;
+    String description;
+    Boolean isAttacker;
 }

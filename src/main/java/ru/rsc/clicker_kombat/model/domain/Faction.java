@@ -1,20 +1,17 @@
 package ru.rsc.clicker_kombat.model.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@Table(name = "faction")
+@Table(name = "factions")
 public class Faction {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "name")
@@ -23,9 +20,14 @@ public class Faction {
     @Column(name = "description")
     private String description;
 
+    @Setter
     @Column(name = "profit")
     private Integer profit;
 
+    @Column(name = "profit_balancing_multiplier")
+    private Double profitMultiplier;
+
+    @Setter
     @Column(name = "is_active")
     private Boolean isActive;
 }

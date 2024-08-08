@@ -1,10 +1,7 @@
 package ru.rsc.clicker_kombat.model.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -14,15 +11,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "character_info")
 public class CharacterInfo {
     @Id
-    @Column(name = "character_id")
-    private Long characterId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @OneToOne
-    @JoinColumn(name = "character_id", referencedColumnName = "id")
+    @JoinColumn(name = "character_id")
     private Character character;
-
-    @Column(name = "faction_id")
-    private Long factionId;
 
     @Column(name = "faction_name")
     private String factionName;
@@ -31,13 +25,14 @@ public class CharacterInfo {
     private Boolean isActive;
 
     @OneToOne
-    @JoinColumn(name = "faction_id", referencedColumnName = "id")
+    @JoinColumn(name = "faction_id")
     private Faction faction;
 
+    @Setter
     @Column(name = "profit")
     private Integer profit;
 
-    @PostLoad
+    @PostPersist
     public void updateFactionNameAndIsActive(){
         if(faction != null){
             factionName = faction.getName();

@@ -16,6 +16,7 @@ public class XPConsts {
 
         public static short getXpMultiplier(Short level) {
             return switch (level) {
+                case Short l when l >=1 && l<= 10 -> NEED_XP_MULTIPLIER_FOR_1_THROUGH_10;
                 case Short l when l >= 11 && l <= 20 -> NEED_XP_MULTIPLIER_FOR_11_THROUGH_20;
                 case Short l when l >= 21 && l <= 30 -> NEED_XP_MULTIPLIER_FOR_21_THROUGH_30;
                 case Short l when l >= 31 && l <= 40 -> NEED_XP_MULTIPLIER_FOR_31_THROUGH_40;
@@ -25,7 +26,7 @@ public class XPConsts {
                 case Short l when l >= 71 && l <= 80 -> NEED_XP_MULTIPLIER_FOR_71_THROUGH_80;
                 case Short l when l >= 81 && l <= 90 -> NEED_XP_MULTIPLIER_FOR_81_THROUGH_90;
                 case Short l when l >= 91 && l <= 100 -> NEED_XP_MULTIPLIER_FOR_91_THROUGH_100;
-                default -> NEED_XP_MULTIPLIER_FOR_1_THROUGH_10;
+                case null, default -> 0;
             };
         }
     }

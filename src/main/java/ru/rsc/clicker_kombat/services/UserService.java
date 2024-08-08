@@ -11,8 +11,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static ru.rsc.clicker_kombat.consts.EntityResponseStatuses.ERROR;
-import static ru.rsc.clicker_kombat.consts.EntityResponseStatuses.SUCCESS;
+import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +24,11 @@ public class UserService {
 
     public EntityResponse getUser(Long id) {
         Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            return EntityResponse.builder()
-                    .status(SUCCESS)
-                    .entity(user.orElseThrow())
-                    .build();
-        } else {
-            return EntityResponse.builder()
-                    .status(ERROR)
-                    .message("Пользователь с id:%s не найден".formatted(id))
-                    .build();
-        }
+        if (user.isPresent())
+            return getEntityResponseSuccess(user.get());
+        else
+            return getEntityResponseErrorUser(id);
+
     }
 
     public EntityResponse createUser(UserRequest response) {

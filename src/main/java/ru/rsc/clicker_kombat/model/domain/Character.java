@@ -12,14 +12,11 @@ import lombok.*;
 @Table(name = "characters")
 public class Character {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "character_name")
     private String name;
-
-    @Column(name = "level")
-    private Short level;
 
     @Transient
     private Long userId;
@@ -29,9 +26,8 @@ public class Character {
     @JsonIgnore
     private User user;
 
-    public Character(String name, Short level, User user) {
+    public Character(String name, User user) {
         this.name = name;
-        this.level = level;
         this.user = user;
     }
     @Transient
