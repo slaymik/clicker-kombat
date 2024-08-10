@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.rsc.clicker_kombat.model.domain.Admin;
 import ru.rsc.clicker_kombat.model.domain.User;
 import ru.rsc.clicker_kombat.model.requests.AdminRequest;
 import ru.rsc.clicker_kombat.model.requests.FactionRequest;
@@ -28,7 +27,7 @@ public class AdminController {
     private final FactionService factionService;
 
     @GetMapping
-    public ResponseEntity<List<Admin>> getAllAdmins() {
+    public ResponseEntity<List<String>> getAllAdmins() {
         return ResponseEntity.ok(adminService.getAllAdmins());
     }
 
@@ -42,32 +41,32 @@ public class AdminController {
         return characterService.deleteCharacter(Long.parseLong(id));
     }
 
-    @GetMapping("/get_all")
+    @GetMapping("/get-all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/create_admin")
-    public ResponseEntity<EntityResponse> createAdmin(@RequestBody AdminRequest request){
-        return ResponseEntity.ok(adminService.createAdmin(request));
+    @GetMapping("/create-admin")
+    public ActionResult createAdmin(@RequestBody AdminRequest request){
+        return adminService.createAdmin(request);
     }
 
-    @GetMapping("/create_faction")
+    @GetMapping("/create-faction")
     public ResponseEntity<EntityResponse> createFaction(@RequestBody FactionRequest request){
         return ResponseEntity.ok(factionService.createFaction(request));
     }
 
-    @GetMapping("/get_faction")
+    @GetMapping("/get-faction")
     public ResponseEntity<EntityResponse> getFaction(@RequestParam("id") String id){
         return ResponseEntity.ok(factionService.getFactionResponse(Long.parseLong(id)));
     }
 
-    @GetMapping("/set_faction")
+    @GetMapping("/set-faction")
     public ResponseEntity<EntityResponse> setFaction(@RequestParam("id") String id){
         return ResponseEntity.ok(factionService.setFactionToInactive(Long.parseLong(id)));
     }
 
-    @GetMapping("/delete_admin")
+    @GetMapping("/delete-admin")
     public ActionResult deleteAdmin(@RequestParam("username") String username){
         return adminService.deleteAdmin(username);
     }

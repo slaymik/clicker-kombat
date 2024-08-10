@@ -5,7 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.rsc.clicker_kombat.model.requests.CharacterInfoRequest;
 import ru.rsc.clicker_kombat.model.responses.EntityResponse;
+import ru.rsc.clicker_kombat.model.responses.LeaderboardResponse;
 import ru.rsc.clicker_kombat.services.CharacterInfoService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("character/info")
@@ -18,8 +21,13 @@ public class CharacterInfoController {
         return ResponseEntity.ok(characterInfoService.getCharacterInfoResponse(Long.parseLong(id)));
     }
 
-    @GetMapping("/update")
+    @PostMapping("/update")
     public ResponseEntity<EntityResponse> updateCharacterInfo(@RequestBody CharacterInfoRequest request){
         return ResponseEntity.ok(characterInfoService.updateProfit(request));
+    }
+
+    @GetMapping("/leaderboard")
+    public ResponseEntity<List<LeaderboardResponse>> getLeaderboard(){
+        return ResponseEntity.ok(characterInfoService.getProfitLeaderboard());
     }
 }

@@ -18,12 +18,12 @@ public class UpgradesController {
         return ResponseEntity.ok(upgradesService.getUpgrades(Long.parseLong(id)));
     }
 
-    @PostMapping("/add_coins")
+    @PostMapping("/add-coins")
     public ResponseEntity<EntityResponse> addUpCoins(@RequestBody UpgradesRequest request){
         return ResponseEntity.ok(upgradesService.addUpCoins(request));
     }
 
-    @GetMapping("/buy")
+    @PostMapping("/buy")
     public ResponseEntity<EntityResponse> buyUpgrades(@RequestBody UpgradesRequest request){
         return ResponseEntity.ok(upgradesService.buyUpgrade(request));
     }

@@ -1,9 +1,6 @@
 package ru.rsc.clicker_kombat.model.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +20,12 @@ public class FactionProfit {
     @Column(name = "faction_name")
     private String factionName;
 
-    @Column(name = "sum")
-    private Double profitSum;
+    @Column(name = "profit_sum")
+    private Long profitSum;
+
+    @Column(name = "character_count")
+    private Integer count;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 }

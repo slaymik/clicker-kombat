@@ -73,8 +73,10 @@ CREATE TABLE IF NOT EXISTS character_xp
 );
 
 CREATE VIEW faction_profits AS
-SELECT character_info.faction_id,
-       character_info.faction_name,
-       SUM(character_info.profit)
+SELECT faction_id,
+       faction_name,
+       is_active,
+       SUM(profit) AS profit_sum,
+       count(character_id) AS character_count
 FROM character_info
-GROUP BY character_info.faction_id, character_info.faction_name
+GROUP BY faction_id, faction_name, is_active

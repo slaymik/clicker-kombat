@@ -10,6 +10,7 @@ import ru.rsc.clicker_kombat.repository.FactionRepository;
 import java.util.Optional;
 
 import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.*;
+import static ru.rsc.clicker_kombat.consts.FactionConsts.HALF_OF_OVERALL_PROFIT;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +22,7 @@ public class FactionService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .isActive(true)
-                .profit(500000)
-                .profitMultiplier(1.0)
+                .profit(HALF_OF_OVERALL_PROFIT)
                 .build();
         factionRepository.save(faction);
         return getEntityResponseSuccess(faction);

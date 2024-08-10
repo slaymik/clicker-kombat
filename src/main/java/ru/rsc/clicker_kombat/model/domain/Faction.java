@@ -24,9 +24,6 @@ public class Faction {
     @Column(name = "profit")
     private Integer profit;
 
-    @Column(name = "profit_balancing_multiplier")
-    private Double profitMultiplier;
-
     @Setter
     @Column(name = "is_active")
     private Boolean isActive;

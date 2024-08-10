@@ -7,6 +7,5 @@ import ru.rsc.clicker_kombat.model.domain.Upgrades;
 public class UpgradesRequest {
     Long characterId;
     Long upCoins;
-    Upgrades upgrades;
-    Integer upgradeId;
+    Upgrades.Upgrade upgrade;
 }
