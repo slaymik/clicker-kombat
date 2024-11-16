@@ -20,4 +20,14 @@ spring:
 logging:
   level:
     org.hibernate.SQL: DEBUG
-    root: info
+    root: debug
+
+jwt:
+  private.key: classpath:app.key
+  public.key: classpath:app.pub
+  token.expiry: 86400
+  refresh-token.expiry: 1209600
+
+gameplay:
+  coef:
+    faction.profit.multiplier: 0.75

@@ -3,7 +3,7 @@ package ru.rsc.clicker_kombat.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.rsc.clicker_kombat.model.domain.Character;
-import ru.rsc.clicker_kombat.model.domain.User;
+import ru.rsc.clicker_kombat.model.domain.Player;
 import ru.rsc.clicker_kombat.model.requests.CharacterRequest;
 import ru.rsc.clicker_kombat.model.responses.ActionResult;
 import ru.rsc.clicker_kombat.model.responses.EntityResponse;
@@ -18,19 +18,19 @@ import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.*;
 @RequiredArgsConstructor
 public class CharacterService {
     private final CharacterRepository characterRepository;
-    private final UserRepository userRepository;
-    private final UserService userService;
+    private final PlayerRepository playerRepository;
+    private final PlayerService playerService;
     private final FactionService factionService;
     private final CharacterInfoService characterInfoService;
     private final CharacterXpService characterXpService;
     private final UpgradesService upgradesService;
 
     public EntityResponse createCharacter(CharacterRequest request) {
-        Optional<User> user = userRepository.findById(request.getUserId());
+        Optional<Player> user = playerRepository.findById(request.getUserId());
         if (user.isPresent()) {
             Character character = Character.builder()
                     .name(request.getName())
-                    .user(user.get())
+                    .player(user.get())
                     .build();
             characterRepository.save(character);
 
@@ -47,11 +47,11 @@ public class CharacterService {
     }
 
     public EntityResponse getAllCharactersByUserId(Long id) {
-        if (userService.getUser(id).getStatus().equals(SUCCESS)) {
-            List<Character> characterList = characterRepository.getCharactersByUser_Id(id);
+        if (playerService.getUser(id).getStatus().equals(SUCCESS)) {
+            List<Character> characterList = characterRepository.getCharactersByPlayer_Id(id);
             return getEntityResponseSuccess(characterList);
         } else {
-            return userService.getUser(id);
+            return playerService.getUser(id);
         }
     }
 
@@ -81,7 +81,7 @@ public class CharacterService {
             Character updatedCharacter = Character.builder()
                     .name(request.getName() == null ? existingCharacter.get().getName() : request.getName())
                     .userId(existingCharacter.get().getUserId())
-                    .user(existingCharacter.get().getUser())
+                    .player(existingCharacter.get().getPlayer())
                     .build();
             characterRepository.save(updatedCharacter);
             return getEntityResponseSuccess(updatedCharacter);

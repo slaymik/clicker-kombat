@@ -32,6 +32,10 @@ public class CharacterInfo {
     @Column(name = "profit")
     private Integer profit;
 
+    @Setter
+    @Column(name = "peak_level")
+    private Integer peakLevel;
+
     @PostPersist
     public void updateFactionNameAndIsActive(){
         if(faction != null){

@@ -1,47 +1,48 @@
 package ru.rsc.clicker_kombat.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.rsc.clicker_kombat.model.domain.User;
-import ru.rsc.clicker_kombat.model.requests.UserRequest;
-import ru.rsc.clicker_kombat.model.responses.EntityResponse;
+import ru.rsc.clicker_kombat.model.domain.UserCredentials;
+import ru.rsc.clicker_kombat.model.responses.ActionResult;
 import ru.rsc.clicker_kombat.repository.UserRepository;
 
-import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
-
-import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final JdbcUserDetailsManager userDetailsManager;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public ActionResult registerUser(UserCredentials userCredentials) {
+        String username = userCredentials.getUsername();
+        if (isUserExists(username)) {
+            return new ActionResult(false, "Пользователь с username: %s уже существует".formatted(username));
+        }
+
+        userDetailsManager.createUser(User.builder()
+                .passwordEncoder(passwordEncoder::encode)
+                .username(username)
+                .password(userCredentials.getPassword())
+                .roles(userCredentials.getRole())
+                .build());
+
+        return isUserExists(username) ? new ActionResult(true, "Пользователь c username: %s успешно создан".formatted(username))
+                : new ActionResult(false, "Во время создания пользователя произошла ошибка");
     }
 
-    public EntityResponse getUser(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent())
-            return getEntityResponseSuccess(user.get());
-        else
-            return getEntityResponseErrorUser(id);
-
+    public Optional<UserCredentials> getUserByUsername(String username){
+        if(!isUserExists(username)){
+            return Optional.empty();
+        }
+        return Optional.of(UserCredentials.fromUserDetails(userDetailsManager.loadUserByUsername(username)));
     }
 
-    public EntityResponse createUser(UserRequest response) {
-        User user = User.builder()
-                .id(response.getId())
-                .username(response.getUsername())
-                .token(response.getToken())
-                .registrationDate(Instant.now())
-                .lastOnline(null)
-                .isActive(true)
-                .characters(null)
-                .build();
-        userRepository.save(user);
-        return getUser(response.getId());
+    private boolean isUserExists(String username) {
+        return userDetailsManager.userExists(username);
     }
 }

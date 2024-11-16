@@ -2,6 +2,7 @@ package ru.rsc.clicker_kombat.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.rsc.clicker_kombat.model.domain.Character;
 import ru.rsc.clicker_kombat.model.domain.CharacterInfo;
 import ru.rsc.clicker_kombat.model.requests.CharacterInfoRequest;
 import ru.rsc.clicker_kombat.model.responses.EntityResponse;
@@ -24,16 +25,17 @@ public class CharacterInfoService {
     private final FactionService factionService;
     private final CharacterRepository characterRepository;
 
-    public void createCharacterInfo(Long characterId, Long factionId){
+    public void createCharacterInfo(Long characterId, Long factionId) {
         CharacterInfo characterInfo = CharacterInfo.builder()
                 .character(characterRepository.findById(characterId).orElseThrow())
                 .faction(factionService.getFaction(factionId).orElseThrow())
                 .profit(0)
+                .peakLevel(0)
                 .build();
         characterInfoRepository.save(characterInfo);
     }
 
-    public EntityResponse getCharacterInfoResponse(Long characterId){
+    public EntityResponse getCharacterInfoResponse(Long characterId) {
         Optional<CharacterInfo> characterInfo = characterInfoRepository.findById(characterId);
         if (characterInfo.isPresent())
             return getEntityResponseSuccess(characterInfo);
@@ -41,9 +43,9 @@ public class CharacterInfoService {
             return getEntityResponseErrorCharacter(characterId);
     }
 
-    public EntityResponse updateProfit(CharacterInfoRequest request){
+    public EntityResponse updateProfit(CharacterInfoRequest request) {
         Optional<CharacterInfo> characterInfo = characterInfoRepository.findCharacterInfoByCharacter_Id(request.getCharacter().getId());
-        if (characterInfo.isPresent()){
+        if (characterInfo.isPresent()) {
             characterInfo.get().setProfit(characterInfo.get().getProfit() + request.getProfit());
             characterInfoRepository.save(characterInfo.get());
             return getEntityResponseSuccess(characterInfo);
@@ -52,11 +54,29 @@ public class CharacterInfoService {
     }
 
     public List<LeaderboardResponse> getProfitLeaderboard() {
+        return getLeaderboardResponses(Comparator.comparingInt(LeaderboardResponse::getProfit));
+    }
+
+    public EntityResponse updatePeakLevel(Long characterId, int peakLevel) {
+        Optional<CharacterInfo> characterInfo = characterInfoRepository.findCharacterInfoByCharacter_Id(characterId);
+        if (characterInfo.isPresent()) {
+            characterInfo.get().setPeakLevel(peakLevel);
+            return getEntityResponseSuccess(characterInfo);
+        } else {
+            return getEntityResponseErrorCharacter(characterId);
+        }
+    }
+
+    public List<LeaderboardResponse> getPeakLevelLeaderboard(){
+        return getLeaderboardResponses(Comparator.comparingInt(LeaderboardResponse::getPeakLevel));
+    }
+
+    private List<LeaderboardResponse> getLeaderboardResponses(Comparator<LeaderboardResponse> leaderboardResponseComparator) {
         List<CharacterInfo> characterInfos = characterInfoRepository.findAll();
         return characterInfos.parallelStream()
                 .map(characterInfo -> new LeaderboardResponse(characterInfo.getCharacter().getId(),
-                        characterInfo.getCharacter().getName(), characterInfo.getProfit()))
-                .sorted(Comparator.comparingInt(LeaderboardResponse::getProfit).reversed()
+                        characterInfo.getCharacter().getName(), characterInfo.getProfit(), characterInfo.getPeakLevel()))
+                .sorted(leaderboardResponseComparator.reversed()
                         .thenComparingLong(LeaderboardResponse::getCharacterId))
                 .collect(Collectors.toList());
     }

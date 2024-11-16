@@ -12,13 +12,16 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @Table(name = "players")
-public class User {
+public class Player {
     @Id
-    @Column(name = "tg_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "username")
     private String username;
+
+    @Column(name = "login")
+    private String login;
 
     @Column(name = "token")
     private String token;
@@ -32,12 +35,13 @@ public class User {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "player")
     private List<Character> characters;
 
-    public User(String username, String token, Instant registrationDate, Instant lastOnline, Boolean isActive, List<Character> characters) {
+    public Player(String username, String token, Instant registrationDate, Instant lastOnline, Boolean isActive, List<Character> characters, String login) {
         this.username = username;
         this.token = token;
+        this.login = login;
         this.registrationDate = registrationDate;
         this.lastOnline = lastOnline;
         this.isActive = isActive;

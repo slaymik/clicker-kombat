@@ -22,16 +22,16 @@ public class Character {
     private Long userId;
 
     @ManyToOne
-    @JoinColumn(name = "tg_id")
+    @JoinColumn(name = "player_id")
     @JsonIgnore
-    private User user;
+    private Player player;
 
-    public Character(String name, User user) {
+    public Character(String name, Player player) {
         this.name = name;
-        this.user = user;
+        this.player = player;
     }
     @Transient
     public Long getUserId(){
-        return user.getId();
+        return player.getId();
     }
 }

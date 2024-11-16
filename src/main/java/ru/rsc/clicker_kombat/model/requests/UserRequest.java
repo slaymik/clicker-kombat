@@ -10,6 +10,7 @@ import java.util.List;
 public class UserRequest {
     Long id;
     String username;
+    String login;
     String token;
     Instant registrationDate;
     Instant lastOnline;
