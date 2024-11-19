@@ -17,13 +17,18 @@ import java.util.UUID;
 public class PlayerController {
     private final PlayerService playerService;
 
-    @GetMapping
-    public ResponseEntity<EntityResponse> getPlayer(@RequestParam("id") String id) {
-        return ResponseEntity.ok(playerService.getUser(UUID.fromString(id)));
+    @GetMapping("/get")
+    public ResponseEntity<EntityResponse> getPlayer(@RequestParam("id") UUID id) {
+        return ResponseEntity.ok(playerService.getUser(id));
     }
 
-    @GetMapping("/update")
+    @PostMapping("/update")
     public ResponseEntity<ActionResult> updatePlayer(@RequestBody PlayerRequest request){
         return ResponseEntity.ok(playerService.updatePlayer(request));
+    }
+
+    @PostMapping("/start-session")
+    public ResponseEntity<ActionResult> addSession(@RequestParam("id") UUID id){
+        return ResponseEntity.ok(playerService.addSession(id));
     }
 }

@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS players
     last_online       TIMESTAMP WITHOUT TIME ZONE,
     is_active         BOOLEAN,
     up_coins          BIGINT,
-    CONSTRAINT pk_players PRIMARY KEY (id)
+    session           INT,
+        CONSTRAINT pk_players PRIMARY KEY (id)
 );
 
 CREATE INDEX IF NOT EXISTS udx_players_username ON players (username);
@@ -92,9 +93,9 @@ CREATE TABLE IF NOT EXISTS runs
 );
 
 CREATE VIEW runs_leaderboard AS
-SELECT r.id AS run_id,
+SELECT r.id                        AS run_id,
        p.username,
-       r.character ->> 'name' AS character_name,
+       r.character ->> 'name'      AS character_name,
        (r.character ->> 'id')::INT AS character_id,
        peak_level.player_id,
        peak_level.max

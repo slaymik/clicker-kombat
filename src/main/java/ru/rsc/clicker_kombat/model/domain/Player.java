@@ -40,6 +40,10 @@ public class Player {
     @Column(name = "up_coins")
     private Long upCoins;
 
+    @Setter
+    @Column(name = "session")
+    private Integer session;
+
     @OneToMany(mappedBy = "player")
     private List<Character> characters;
 

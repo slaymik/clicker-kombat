@@ -54,7 +54,7 @@ public class PlayerService {
     @Transactional
     public ActionResult updatePlayer(PlayerRequest request) {
         Optional<Player> playerOpt = playerRepository.findById(request.getId());
-        if (playerOpt.isEmpty()){
+        if (playerOpt.isEmpty()) {
             return new ActionResult(false, "Пользователь с id:%s не найден".formatted(request.getId().toString()));
         }
         Player player = playerOpt.get();
@@ -62,5 +62,16 @@ public class PlayerService {
         player.setLastOnline(request.getLastOnline());
         playerRepository.save(player);
         return new ActionResult(true, "Пользователь обновлен");
+    }
+
+    public ActionResult addSession(UUID id) {
+        Optional<Player> playerOpt = playerRepository.findById(id);
+        if (playerOpt.isEmpty()) {
+            return new ActionResult(false, "Пользователь с id:%s не найден".formatted(id.toString()));
+        }
+        Player player = playerOpt.get();
+        player.setSession(player.getSession() + 1);
+        playerRepository.save(player);
+        return new ActionResult(true, "Сессия добавлена");
     }
 }
