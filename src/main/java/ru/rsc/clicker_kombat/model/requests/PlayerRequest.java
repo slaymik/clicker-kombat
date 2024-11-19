@@ -5,15 +5,12 @@ import ru.rsc.clicker_kombat.model.domain.Character;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Value
-public class UserRequest {
-    Long id;
-    String username;
-    String login;
-    String token;
-    Instant registrationDate;
+public class PlayerRequest {
+    UUID id;
     Instant lastOnline;
-    Boolean isActive;
+    Long upCoins;
     List<Character> characters;
 }

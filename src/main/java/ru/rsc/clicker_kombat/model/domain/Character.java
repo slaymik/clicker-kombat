@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -12,14 +14,14 @@ import lombok.*;
 @Table(name = "characters")
 public class Character {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "character_name")
     private String name;
 
     @Transient
-    private Long userId;
+    private UUID userId;
 
     @ManyToOne
     @JoinColumn(name = "player_id")
@@ -31,7 +33,7 @@ public class Character {
         this.player = player;
     }
     @Transient
-    public Long getUserId(){
+    public UUID getUserId(){
         return player.getId();
     }
 }

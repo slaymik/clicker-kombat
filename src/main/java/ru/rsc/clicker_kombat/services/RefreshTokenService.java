@@ -25,7 +25,6 @@ public class RefreshTokenService {
                 .username(username)
                 .expiryDate(Instant.now().plusSeconds(expiry))
                 .build();
-
         refreshToken = refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }

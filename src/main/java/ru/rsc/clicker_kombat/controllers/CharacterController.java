@@ -7,6 +7,8 @@ import ru.rsc.clicker_kombat.model.requests.CharacterRequest;
 import ru.rsc.clicker_kombat.model.responses.EntityResponse;
 import ru.rsc.clicker_kombat.services.CharacterService;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("character")
 @RequiredArgsConstructor
@@ -15,7 +17,7 @@ public class CharacterController {
 
     @GetMapping
     public ResponseEntity<EntityResponse> getAllCharacters(@RequestParam("tg_id") String id) {
-        return ResponseEntity.ok(characterService.getAllCharactersByUserId(Long.parseLong(id)));
+        return ResponseEntity.ok(characterService.getAllCharactersByUserId(UUID.fromString(id)));
     }
 
     @PostMapping("/create")

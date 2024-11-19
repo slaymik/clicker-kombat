@@ -6,10 +6,10 @@ spring:
     database: postgresql
     hibernate:
       ddl-auto: none
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         show_sql: false
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
 
   datasource:
     url: jdbc:postgresql://localhost:5432/clicker_kombat

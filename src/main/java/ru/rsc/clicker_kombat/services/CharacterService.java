@@ -11,6 +11,7 @@ import ru.rsc.clicker_kombat.repository.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.*;
 
@@ -20,10 +21,6 @@ public class CharacterService {
     private final CharacterRepository characterRepository;
     private final PlayerRepository playerRepository;
     private final PlayerService playerService;
-    private final FactionService factionService;
-    private final CharacterInfoService characterInfoService;
-    private final CharacterXpService characterXpService;
-    private final UpgradesService upgradesService;
 
     public EntityResponse createCharacter(CharacterRequest request) {
         Optional<Player> user = playerRepository.findById(request.getUserId());
@@ -33,20 +30,12 @@ public class CharacterService {
                     .player(user.get())
                     .build();
             characterRepository.save(character);
-
-            if (factionService.getFactionResponse(request.getFactionId()).getStatus().equals(SUCCESS)) {
-                characterInfoService.createCharacterInfo(request.getId(), request.getFactionId());
-                characterXpService.createCharacterXp(request.getId());
-                upgradesService.createUpgrades(request.getId());
-            } else
-                return getEntityResponseErrorFaction(request.getFactionId());
-
             return getEntityResponseSuccess(character);
         } else
             return getEntityResponseErrorUser(request.getUserId());
     }
 
-    public EntityResponse getAllCharactersByUserId(Long id) {
+    public EntityResponse getAllCharactersByUserId(UUID id) {
         if (playerService.getUser(id).getStatus().equals(SUCCESS)) {
             List<Character> characterList = characterRepository.getCharactersByPlayer_Id(id);
             return getEntityResponseSuccess(characterList);

@@ -3,9 +3,12 @@ package ru.rsc.clicker_kombat.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.rsc.clicker_kombat.model.requests.UserRequest;
+import ru.rsc.clicker_kombat.model.requests.PlayerRequest;
+import ru.rsc.clicker_kombat.model.responses.ActionResult;
 import ru.rsc.clicker_kombat.model.responses.EntityResponse;
 import ru.rsc.clicker_kombat.services.PlayerService;
+
+import java.util.UUID;
 
 
 @RestController
@@ -16,11 +19,11 @@ public class PlayerController {
 
     @GetMapping
     public ResponseEntity<EntityResponse> getPlayer(@RequestParam("id") String id) {
-        return ResponseEntity.ok(playerService.getUser(Long.parseLong(id)));
+        return ResponseEntity.ok(playerService.getUser(UUID.fromString(id)));
     }
 
-    @PostMapping("/auth")
-    public ResponseEntity<EntityResponse> createPlayer(@RequestBody UserRequest response) {
-        return ResponseEntity.ok(playerService.createUser(response));
+    @GetMapping("/update")
+    public ResponseEntity<ActionResult> updatePlayer(@RequestBody PlayerRequest request){
+        return ResponseEntity.ok(playerService.updatePlayer(request));
     }
 }

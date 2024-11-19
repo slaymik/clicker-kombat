@@ -59,7 +59,7 @@
     </appender>
 
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOGS"/>
         <appender-ref ref="ERRORS"/>

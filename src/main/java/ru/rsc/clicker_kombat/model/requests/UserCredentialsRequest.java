@@ -6,4 +6,5 @@ import lombok.Value;
 public class UserCredentialsRequest {
     String username;
     String password;
+    String playerName;
 }
