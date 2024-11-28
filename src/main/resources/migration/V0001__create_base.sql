@@ -112,8 +112,6 @@ FROM (SELECT player_id, character ->> 'id' as character_id, MAX(level) AS max
          LEFT JOIN players p ON p.id = r.player_id
 ORDER BY peak_level.max DESC;
 
-CREATE INDEX idx_runs_leaderboard_player_id ON runs_leaderboard (player_id);
-CREATE INDEX idx_runs_leaderboard_character_id ON runs_leaderboard (character_id);
 
 CREATE VIEW players_rating AS
 SELECT RANK() OVER (ORDER BY p.rating DESC) AS rank,
@@ -121,5 +119,3 @@ SELECT RANK() OVER (ORDER BY p.rating DESC) AS rank,
        p.username,
        p.rating
 FROM players p;
-
-CREATE INDEX idx_players_rating ON players_rating (player_id);

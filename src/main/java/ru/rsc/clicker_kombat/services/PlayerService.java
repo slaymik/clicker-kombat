@@ -51,6 +51,7 @@ public class PlayerService {
                     .username(player.getUsername())
                     .rating(player.getRating())
                     .rank(playerRating.getRank())
+                    .upCoins(player.getUpCoins())
                     .build());
         }
     }
