@@ -23,7 +23,7 @@ public class CharacterService {
     private final PlayerService playerService;
 
     public EntityResponse createCharacter(CharacterRequest request) {
-        Optional<Player> user = playerRepository.findById(request.getUserId());
+        Optional<Player> user = playerRepository.findById(request.getPlayerId());
         if (user.isPresent()) {
             Character character = Character.builder()
                     .name(request.getName())
@@ -32,7 +32,7 @@ public class CharacterService {
             characterRepository.save(character);
             return getEntityResponseSuccess(character);
         } else
-            return getEntityResponseErrorUser(request.getUserId());
+            return getEntityResponseErrorUser(request.getPlayerId());
     }
 
     public EntityResponse getAllCharactersByUserId(UUID id) {
@@ -69,7 +69,7 @@ public class CharacterService {
         if (existingCharacter.isPresent()) {
             Character updatedCharacter = Character.builder()
                     .name(request.getName() == null ? existingCharacter.get().getName() : request.getName())
-                    .userId(existingCharacter.get().getUserId())
+                    .playerId(existingCharacter.get().getPlayerId())
                     .player(existingCharacter.get().getPlayer())
                     .build();
             characterRepository.save(updatedCharacter);

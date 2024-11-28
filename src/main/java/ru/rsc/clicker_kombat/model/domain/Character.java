@@ -15,25 +15,16 @@ import java.util.UUID;
 public class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "character_name")
     private String name;
 
     @Transient
-    private UUID userId;
+    private UUID playerId;
 
     @ManyToOne
     @JoinColumn(name = "player_id")
     @JsonIgnore
     private Player player;
-
-    public Character(String name, Player player) {
-        this.name = name;
-        this.player = player;
-    }
-    @Transient
-    public UUID getUserId(){
-        return player.getId();
-    }
 }

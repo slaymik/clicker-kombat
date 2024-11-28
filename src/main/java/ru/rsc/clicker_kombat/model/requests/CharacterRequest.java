@@ -8,6 +8,6 @@ import java.util.UUID;
 public class CharacterRequest {
     Long id;
     String name;
-    UUID userId;
+    UUID playerId;
     Long factionId;
 }

@@ -3,22 +3,30 @@ package ru.rsc.clicker_kombat.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.rsc.clicker_kombat.model.domain.Run;
 import ru.rsc.clicker_kombat.model.requests.RunStateRequest;
 import ru.rsc.clicker_kombat.model.responses.EntityResponse;
+import ru.rsc.clicker_kombat.services.PlayerService;
 import ru.rsc.clicker_kombat.services.RunService;
 
 import java.util.UUID;
+
+import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.getEntityResponseSuccess;
 
 @RestController
 @RequestMapping("/run")
 @RequiredArgsConstructor
 public class RunController {
     private final RunService runService;
+    private final PlayerService playerService;
 
     @PostMapping("/save")
     public ResponseEntity<EntityResponse> saveRun(@RequestBody RunStateRequest request) {
-        EntityResponse response = runService.saveRun(request);
-        return ResponseEntity.ok(response);
+        Run run = runService.saveRun(request);
+        if (run.getIsEnded()){
+            playerService.updateRating(run.getPlayerId());
+        }
+        return ResponseEntity.ok(getEntityResponseSuccess(run));
     }
 
     @GetMapping("/get-last")

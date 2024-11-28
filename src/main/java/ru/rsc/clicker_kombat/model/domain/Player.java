@@ -44,15 +44,10 @@ public class Player {
     @Column(name = "session")
     private Integer session;
 
+    @Setter
+    @Column(name = "rating")
+    private Integer rating;
+
     @OneToMany(mappedBy = "player")
     private List<Character> characters;
-
-
-    public Player(Instant registrationDate, Instant lastOnline, Boolean isActive, List<Character> characters, String login) {
-        this.login = login;
-        this.registrationDate = registrationDate;
-        this.lastOnline = lastOnline;
-        this.isActive = isActive;
-        this.characters = characters;
-    }
 }

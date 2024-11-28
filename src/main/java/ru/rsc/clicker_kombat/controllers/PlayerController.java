@@ -23,12 +23,20 @@ public class PlayerController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<ActionResult> updatePlayer(@RequestBody PlayerRequest request){
+    public ResponseEntity<ActionResult> updatePlayer(@RequestBody PlayerRequest request) {
         return ResponseEntity.ok(playerService.updatePlayer(request));
     }
 
     @PostMapping("/start-session")
-    public ResponseEntity<ActionResult> addSession(@RequestParam("id") UUID id){
+    public ResponseEntity<ActionResult> addSession(@RequestParam("id") UUID id) {
         return ResponseEntity.ok(playerService.addSession(id));
+    }
+
+    @GetMapping("/leaderboard")
+    public ResponseEntity<EntityResponse> getRankLeaderboard(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+        if (size > 500) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        return ResponseEntity.ok(playerService.getRankLeaderboard(size, page));
     }
 }

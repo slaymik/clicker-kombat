@@ -30,7 +30,7 @@ public class Run {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "character", columnDefinition = "jsonb")
-    private JsonNode character;
+    private Character character;
 
     @Column(name = "level")
     private Integer level;
@@ -66,4 +66,7 @@ public class Run {
 
     @Column(name = "is_ended")
     private Boolean isEnded;
+
+    @Column(name = "is_heroic")
+    private Boolean isHeroic;
 }
