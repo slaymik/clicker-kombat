@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rsc.clicker_kombat.model.domain.LeaderboardRun;
 import ru.rsc.clicker_kombat.model.domain.Player;
@@ -22,8 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.getEntityResponseErrorUser;
-import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.getEntityResponseSuccess;
+import static ru.rsc.clicker_kombat.consts.EntityResponseFactory.getUserNotFoundResponse;
+import static ru.rsc.clicker_kombat.consts.EntityResponseFactory.getEntityResponseSuccess;
 import static ru.rsc.clicker_kombat.consts.PlayerConsts.NOT_HEROIC_RATING_LIMIT;
 import static ru.rsc.clicker_kombat.utils.calcs.RatingCalc.calculateRating;
 
@@ -38,11 +40,11 @@ public class PlayerService {
         return playerRepository.findAll();
     }
 
-    public EntityResponse getUser(UUID id) {
+    public EntityResponse getPlayer(UUID id) {
         Optional<Player> playerOptional = playerRepository.findById(id);
         Optional<PlayerRating> playerRatingOptional = playerRatingRepository.findById(id);
         if (playerOptional.isEmpty() || playerRatingOptional.isEmpty())
-            return getEntityResponseErrorUser(id);
+            return getUserNotFoundResponse(id);
         else {
             Player player = playerOptional.get();
             PlayerRating playerRating = playerRatingOptional.get();
@@ -54,6 +56,10 @@ public class PlayerService {
                     .upCoins(player.getUpCoins())
                     .build());
         }
+    }
+
+    public Optional<Player> findPlayer(UUID id) {
+        return playerRepository.findById(id);
     }
 
     public Optional<Player> getPlayerIdByLogin(String login) {
@@ -86,18 +92,23 @@ public class PlayerService {
         return new ActionResult(true, "Пользователь обновлен");
     }
 
+    @Transactional
+    public void savePlayer(Player player) {
+        playerRepository.save(player);
+    }
+
     public ActionResult addSession(UUID id) {
         Optional<Player> playerOpt = playerRepository.findById(id);
         if (playerOpt.isEmpty()) {
             return new ActionResult(false, "Пользователь с id:%s не найден".formatted(id.toString()));
         }
         Player player = playerOpt.get();
-        player.setSession(player.getSession() + 1);
+        player.setSession(player.getSession() == null ? 1 : player.getSession() + 1);
         playerRepository.save(player);
         return new ActionResult(true, "Сессия добавлена");
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
     public void updateRating(UUID playerId) {
         List<LeaderboardRun> leaderboardRuns = leaderboardRepository.findByPlayerId(playerId);
         if (leaderboardRuns.isEmpty()) {

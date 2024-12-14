@@ -2,10 +2,7 @@ package ru.rsc.clicker_kombat.model.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -15,11 +12,11 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @Table(name = "runs")
 public class Run {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,15 +25,21 @@ public class Run {
     @Column(name = "player_id")
     private UUID playerId;
 
+    @Column(name = "character")
+    private Integer characterId;
+
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "character", columnDefinition = "jsonb")
-    private Character character;
+    @Column(name = "character_params", columnDefinition = "jsonb")
+    private JsonNode characterParams;
 
     @Column(name = "level")
     private Integer level;
 
+    @Column(name = "stage")
+    private Integer stage;
+
     @Column(name = "shit_coins")
-    private Long shitCoins;
+    private Integer shitCoins;
 
     @Column(name = "up_coins")
     private Long runUpCoins;
@@ -64,8 +67,11 @@ public class Run {
     @Column(name = "duration")
     private Integer duration;
 
-    @Column(name = "is_ended")
-    private Boolean isEnded;
+    @Column(name = "is_finished")
+    private Boolean isFinished;
+
+    @Column(name = "finished_by_victory")
+    private Boolean finishedByVictory;
 
     @Column(name = "is_heroic")
     private Boolean isHeroic;

@@ -12,7 +12,6 @@ import java.util.UUID;
 @Getter
 @Table(name = "players_rating")
 public class PlayerRating {
-
     @Id
     @Column(name = "player_id")
     private UUID playerId;

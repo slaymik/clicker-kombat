@@ -15,5 +15,5 @@ public class LeaderboardResponse {
     Integer characterId;
     Integer level;
     Integer duration;
-    List<Integer> boostsId;
+    List<Integer> boostIds;
 }

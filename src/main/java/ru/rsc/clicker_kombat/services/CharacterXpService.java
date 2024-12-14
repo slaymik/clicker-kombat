@@ -12,7 +12,7 @@ import ru.rsc.clicker_kombat.utils.calcs.XpCalc;
 
 import java.util.Optional;
 
-import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.*;
+import static ru.rsc.clicker_kombat.consts.EntityResponseFactory.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class CharacterXpService {
         if (xp.isPresent())
             return getEntityResponseSuccess(xp.get());
         else
-            return getEntityResponseErrorCharacter(id);
+            return getCharacterNotFoundResponse(id);
     }
 
     public EntityResponse updateCharacterXp(CharacterXpRequest request) {
@@ -44,7 +44,7 @@ public class CharacterXpService {
             characterXpRepository.save(updatedXp);
             return getEntityResponseSuccess(updatedXp);
         } else
-            return getEntityResponseErrorCharacter(request.getCharacterId());
+            return getCharacterNotFoundResponse(request.getCharacterId());
     }
 
     public void createCharacterXp(Long id) {
@@ -80,6 +80,6 @@ public class CharacterXpService {
             characterXpRepository.save(characterXp);
             return getEntityResponseSuccess(characterXp);
         } else
-            return getEntityResponseErrorCharacter(request.getCharacterId());
+            return getCharacterNotFoundResponse(request.getCharacterId());
     }
 }

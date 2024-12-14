@@ -17,11 +17,14 @@ public class LeaderboardRun {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "character_id")
+    @Column(name = "character")
     private Integer characterId;
 
     @Column(name = "player_id")
     private UUID playerId;
+
+    @Column(name = "max")
+    private Long level;
 
     @OneToOne
     @JoinColumn(name = "run_id", referencedColumnName = "id")

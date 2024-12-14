@@ -1,7 +1,8 @@
+server.port: 9998
+
 spring:
   application:
     name: clicker-kombat
-
   jpa:
     database: postgresql
     hibernate:
@@ -10,7 +11,6 @@ spring:
       hibernate:
         show_sql: false
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
-
   datasource:
     url: jdbc:postgresql://localhost:5432/clicker_kombat
     username: postgres
@@ -19,12 +19,12 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    root: debug
+    org.hibernate.SQL: INFO
+    root: info
 
 jwt:
-  private.key: classpath:app.key
-  public.key: classpath:app.pub
+  private.key: classpath:private.pem
+  public.key: classpath:public.pem
   token.expiry: 86400
   refresh-token.expiry: 1209600
 

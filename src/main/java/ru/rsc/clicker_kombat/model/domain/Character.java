@@ -1,8 +1,11 @@
 package ru.rsc.clicker_kombat.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
@@ -19,6 +22,13 @@ public class Character {
 
     @Column(name = "character_name")
     private String name;
+
+    @Column(name = "level")
+    private Short level;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "items", columnDefinition = "jsonb")
+    private JsonNode items;
 
     @Transient
     private UUID playerId;

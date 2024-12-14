@@ -2,12 +2,12 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS players
 (
-    id                uuid default uuid_generate_v4(),
+    id                uuid    default uuid_generate_v4(),
     username          VARCHAR(255),
     login             VARCHAR(255),
     registration_date TIMESTAMP WITHOUT TIME ZONE,
     last_online       TIMESTAMP WITHOUT TIME ZONE,
-    is_active         BOOLEAN,
+    is_active         BOOLEAN DEFAULT TRUE,
     up_coins          BIGINT,
     session           INT,
     rating            INT,
@@ -25,8 +25,7 @@ CREATE TABLE IF NOT EXISTS characters
     CONSTRAINT FK_CHARACTERS_ON_PLAYER FOREIGN KEY (player_id) REFERENCES players (id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_players_id ON characters (player_id);
-
+CREATE INDEX IF NOT EXISTS idx_characters_player_id ON characters (player_id);
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -77,38 +76,42 @@ CREATE TABLE IF NOT EXISTS refresh_token
 
 CREATE TABLE IF NOT EXISTS runs
 (
-    id              BIGSERIAL NOT NULL,
-    player_id       uuid,
-    character       jsonb,
-    level           BIGINT,
-    shit_coins      BIGINT,
-    up_coins        BIGINT,
-    enemy           INT,
-    world           INT,
-    boosts          jsonb,
-    consumables     jsonb,
-    start_timestamp timestamptz,
-    end_timestamp   timestamptz,
-    duration        INT,
-    is_ended        BOOLEAN,
-    is_heroic       BOOLEAN,
+    id                  BIGSERIAL NOT NULL,
+    player_id           uuid,
+    character           INT,
+    character_params    jsonb,
+    level               BIGINT,
+    stage               INT,
+    shit_coins          INT,
+    up_coins            BIGINT,
+    enemy               INT,
+    world               INT,
+    boosts              jsonb,
+    consumables         jsonb,
+    start_timestamp     timestamptz,
+    end_timestamp       timestamptz,
+    duration            INT,
+    is_finished         BOOLEAN DEFAULT FALSE,
+    finished_by_victory BOOLEAN DEFAULT FALSE,
+    is_heroic           BOOLEAN DEFAULT FALSE,
     CONSTRAINT pk_runs PRIMARY KEY (id)
 );
+
+CREATE INDEX IF NOT EXISTS idx_runs_players_id ON runs (player_id);
 
 CREATE VIEW runs_leaderboard AS
 SELECT DISTINCT r.id                        AS run_id,
                 p.username,
-                r.character ->> 'name'      AS character_name,
-                (r.character ->> 'id')::INT AS character_id,
+                r.character,
                 peak_level.player_id,
                 peak_level.max
-FROM (SELECT player_id, character ->> 'id' as character_id, MAX(level) AS max
+FROM (SELECT player_id, character, MAX(level) AS max
       FROM runs
-      WHERE is_ended = true
-      group by player_id, character_id) AS peak_level
+      WHERE is_finished = true
+      group by player_id, character) AS peak_level
          LEFT JOIN runs r
                    ON peak_level.player_id = r.player_id
-                       AND peak_level.max = r.level AND peak_level.character_id = r.character ->> 'id'
+                       AND peak_level.max = r.level AND peak_level.character = r.character
          LEFT JOIN players p ON p.id = r.player_id
 ORDER BY peak_level.max DESC;
 

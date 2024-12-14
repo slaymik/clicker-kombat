@@ -8,6 +8,7 @@ import ru.rsc.clicker_kombat.model.domain.RefreshToken;
 import ru.rsc.clicker_kombat.repository.RefreshTokenRepository;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -44,7 +45,7 @@ public class RefreshTokenService {
         return token;
     }
 
-    public RefreshToken findByToken(UUID token) {
-        return refreshTokenRepository.getReferenceById(token);
+    public Optional<RefreshToken> findByToken(UUID token) {
+        return refreshTokenRepository.findById(token);
     }
 }

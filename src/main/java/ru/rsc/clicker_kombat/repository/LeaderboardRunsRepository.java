@@ -3,6 +3,7 @@ package ru.rsc.clicker_kombat.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.rsc.clicker_kombat.model.domain.LeaderboardRun;
 
@@ -19,4 +20,7 @@ public interface LeaderboardRunsRepository extends JpaRepository<LeaderboardRun,
 
     List<LeaderboardRun> findByPlayerId(UUID playerId);
 
+    @Query("select r from LeaderboardRun r " +
+            "where r.level = (select max(r2.level) from LeaderboardRun r2 where r.playerId = r2.playerId)")
+    Page<LeaderboardRun> findLeaderboardRunForAnyCharacter(Pageable pageable);
 }

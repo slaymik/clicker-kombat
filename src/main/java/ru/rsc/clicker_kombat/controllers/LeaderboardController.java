@@ -16,7 +16,7 @@ public class LeaderboardController {
     @GetMapping("/leaderboard")
     public ResponseEntity<EntityResponse> getMaxLevelLeaderboard(@RequestParam("size") Integer size, @RequestParam("page") Integer page,
                                                                  @RequestParam(name = "character-id", required = false, defaultValue = "-1") Integer characterId) {
-        if (size>500){
+        if (size > 500) {
             return ResponseEntity.badRequest().body(null);
         }
         if (characterId == -1) {

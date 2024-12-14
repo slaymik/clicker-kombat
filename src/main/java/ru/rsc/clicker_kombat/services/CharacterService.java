@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static ru.rsc.clicker_kombat.consts.EntityResponseConstsAndFactory.*;
+import static ru.rsc.clicker_kombat.consts.EntityResponseFactory.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,15 +32,15 @@ public class CharacterService {
             characterRepository.save(character);
             return getEntityResponseSuccess(character);
         } else
-            return getEntityResponseErrorUser(request.getPlayerId());
+            return getUserNotFoundResponse(request.getPlayerId());
     }
 
     public EntityResponse getAllCharactersByUserId(UUID id) {
-        if (playerService.getUser(id).getStatus().equals(SUCCESS)) {
+        if (playerService.getPlayer(id).getStatus().equals(SUCCESS)) {
             List<Character> characterList = characterRepository.getCharactersByPlayer_Id(id);
             return getEntityResponseSuccess(characterList);
         } else {
-            return playerService.getUser(id);
+            return playerService.getPlayer(id);
         }
     }
 
@@ -49,7 +49,7 @@ public class CharacterService {
         if (character.isPresent())
             return getEntityResponseSuccess(character.get());
         else
-            return getEntityResponseErrorCharacter(id);
+            return getCharacterNotFoundResponse(id);
     }
 
 
@@ -75,6 +75,6 @@ public class CharacterService {
             characterRepository.save(updatedCharacter);
             return getEntityResponseSuccess(updatedCharacter);
         } else
-            return getEntityResponseErrorCharacter(request.getId());
+            return getCharacterNotFoundResponse(request.getId());
     }
 }

@@ -44,10 +44,12 @@ public class TokenController {
     public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
-        RefreshToken refreshToken = refreshTokenService.findByToken(UUID.fromString(requestRefreshToken));
-        if (refreshToken == null) {
+        Optional<RefreshToken> refreshTokenOpt = refreshTokenService.findByToken(UUID.fromString(requestRefreshToken));
+        if (refreshTokenOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Token is null");
         }
+
+        RefreshToken refreshToken = refreshTokenOpt.get();
         if (refreshTokenService.verifyExpiration(refreshToken)) {
             JwtResponse response = new JwtResponse(encoder.encode(JwtEncoderParameters.from(jwtService.getClaims(refreshToken.getUsername()))).getTokenValue(),
                     refreshTokenService.updateRefreshToken(refreshToken).getToken().toString(), null);

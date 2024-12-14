@@ -19,7 +19,7 @@ public class PlayerController {
 
     @GetMapping("/get")
     public ResponseEntity<EntityResponse> getPlayer(@RequestParam("id") UUID id) {
-        return ResponseEntity.ok(playerService.getUser(id));
+        return ResponseEntity.ok(playerService.getPlayer(id));
     }
 
     @PostMapping("/update")
