@@ -42,17 +42,24 @@ public class PlayerService {
 
     public EntityResponse getPlayer(UUID id) {
         Optional<Player> playerOptional = playerRepository.findById(id);
-        Optional<PlayerRating> playerRatingOptional = playerRatingRepository.findById(id);
-        if (playerOptional.isEmpty() || playerRatingOptional.isEmpty())
+        if (playerOptional.isEmpty())
             return getUserNotFoundResponse(id);
         else {
             Player player = playerOptional.get();
-            PlayerRating playerRating = playerRatingOptional.get();
+            Optional<PlayerRating> playerRatingOptional = playerRatingRepository.findById(id);
+
+            int rating = 0;
+            long rank = 0;
+            if (playerRatingOptional.isPresent()) {
+                rating = playerRatingOptional.get().getRating();
+                rank = playerRatingOptional.get().getRank();
+            }
+
             return getEntityResponseSuccess(PlayerResponse.builder()
                     .playerId(player.getId())
                     .username(player.getUsername())
-                    .rating(player.getRating())
-                    .rank(playerRating.getRank())
+                    .rating(rating)
+                    .rank(rank)
                     .upCoins(player.getUpCoins())
                     .build());
         }
@@ -123,7 +130,7 @@ public class PlayerService {
         playerRepository.save(player);
     }
 
-    public EntityResponse getRankLeaderboard(Integer size, Integer page){
+    public EntityResponse getRankLeaderboard(Integer size, Integer page) {
         Page<PlayerRating> leaderboard = playerRatingRepository.findAll(PageRequest.of(page, size));
         return getEntityResponseSuccess(new PagedElementsResponse(leaderboard));
     }
