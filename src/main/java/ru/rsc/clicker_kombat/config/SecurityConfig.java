@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -44,11 +45,14 @@ public class SecurityConfig {
     RSAPrivateKey priv;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/token"),AntPathRequestMatcher.antMatcher("/user/create"),
-                                AntPathRequestMatcher.antMatcher("/refreshtoken")).permitAll().anyRequest().authenticated()
+                        .requestMatchers(
+                                AntPathRequestMatcher.antMatcher("/token"), AntPathRequestMatcher.antMatcher("/user/create"),
+                                AntPathRequestMatcher.antMatcher("/refreshtoken"), AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS, "/**"))
+                        .permitAll()
+                        .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
@@ -59,12 +63,12 @@ public class SecurityConfig {
                 .exceptionHandling((exceptions) -> exceptions
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+                ).cors(cors -> cors.configure(http));
         return http.build();
     }
 
     @Bean
-    public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource){
+    public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource) {
         return new JdbcUserDetailsManager(dataSource);
     }
 

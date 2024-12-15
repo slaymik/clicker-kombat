@@ -121,4 +121,5 @@ SELECT RANK() OVER (ORDER BY p.rating DESC) AS rank,
        p.id                                 AS player_id,
        p.username,
        p.rating
-FROM players p;
+FROM players p
+WHERE p.rating IS NOT NULL;
