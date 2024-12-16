@@ -100,20 +100,26 @@ CREATE TABLE IF NOT EXISTS runs
 CREATE INDEX IF NOT EXISTS idx_runs_players_id ON runs (player_id);
 
 CREATE VIEW runs_leaderboard AS
-SELECT DISTINCT r.id                        AS run_id,
-                p.username,
-                r.character,
-                peak_level.player_id,
-                peak_level.max
-FROM (SELECT player_id, character, MAX(level) AS max
-      FROM runs
-      WHERE is_finished = true
-      group by player_id, character) AS peak_level
-         LEFT JOIN runs r
-                   ON peak_level.player_id = r.player_id
-                       AND peak_level.max = r.level AND peak_level.character = r.character
-         LEFT JOIN players p ON p.id = r.player_id
-ORDER BY peak_level.max DESC;
+WITH peak_levels AS (SELECT player_id, character, MAX(level) AS max
+                     FROM runs
+                     WHERE is_finished = true
+                     GROUP BY player_id, character),
+     ranked_runs AS (SELECT r.id                                                                           AS run_id,
+                            p.username,
+                            r.character,
+                            peak_levels.player_id,
+                            peak_levels.max,
+                            ROW_NUMBER()
+                            OVER (PARTITION BY peak_levels.player_id, peak_levels.character ORDER BY r.id) AS rn
+                     FROM peak_levels
+                              LEFT JOIN runs r ON peak_levels.player_id = r.player_id
+                         AND peak_levels.max = r.level
+                         AND peak_levels.character = r.character
+                              LEFT JOIN players p ON p.id = r.player_id)
+SELECT run_id, username, character, player_id, max
+FROM ranked_runs
+WHERE rn = 1
+ORDER BY max DESC;
 
 
 CREATE VIEW players_rating AS
