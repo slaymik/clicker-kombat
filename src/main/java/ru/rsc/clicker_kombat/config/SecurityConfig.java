@@ -50,7 +50,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/token"), AntPathRequestMatcher.antMatcher("/user/create"),
-                                AntPathRequestMatcher.antMatcher("/refreshtoken"), AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS, "/**"))
+                                AntPathRequestMatcher.antMatcher("/refreshtoken"), AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS, "/**"),
+                                AntPathRequestMatcher.antMatcher("/version"))
                         .permitAll()
                         .anyRequest().authenticated()
                 )
