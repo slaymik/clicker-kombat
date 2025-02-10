@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class CharacterXp {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
+    Integer id;
 
     @OneToOne
     @JoinColumn(name = "character_id", referencedColumnName = "id")
@@ -25,14 +25,14 @@ public class CharacterXp {
     private Short level;
 
     @Column(name = "current_xp")
-    private Long currentXp;
+    private Integer currentXp;
 
     @Column(name = "all_xp")
-    private Long allXp;
+    private Integer allXp;
 
     @Column(name = "xp_requirement")
-    private Long xpRequirement;
+    private Integer xpRequirement;
 
     @Column(name = "xp_until_next_level")
-    private Long needXp;
+    private Integer needXp;
 }

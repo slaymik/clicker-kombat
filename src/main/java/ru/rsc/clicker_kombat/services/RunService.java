@@ -36,12 +36,14 @@ public class RunService {
     private final RunRepository runRepository;
     private final LeaderboardRunsRepository leaderboardRunsRepository;
     private final PlayerService playerService;
+    private final CharacterXpService characterXpService;
 
     @Transactional
     public EntityResponse startRun(RunStateRequest request) {
         Run run = Run.builder()
                 .playerId(request.getPlayerId())
                 .characterId(request.getCharacterId())
+                .characterGameId(request.getCharacterGameId())
                 .characterParams(request.getCharacterParams())
                 .level(1)
                 .stage(1)
@@ -75,8 +77,8 @@ public class RunService {
             return getRunAlreadyFinishedActionResult(run.getId());
         }
         if (request.getStage() != run.getStage() + 1
-                || request.getLevel() < run.getLevel()
-                || request.getLevel() > run.getLevel() + 1) {
+            || request.getLevel() < run.getLevel()
+            || request.getLevel() > run.getLevel() + 1) {
             return new ActionResult(false, "Попытка сохранить забег с невалидным уровнем");
         }
 
@@ -114,9 +116,11 @@ public class RunService {
 
         run.setEndTime(Instant.now());
         run.setIsFinished(true);
-        run.setRunUpCoins((long) UpCoinsCalc
+        run.setRunUpCoins(UpCoinsCalc
                 .calculate(run.getLevel(), run.getIsHeroic(), request.getFinishedByVictory()));
         runRepository.save(run);
+
+        characterXpService.addXp(run.getCharacterId(), run.getRunUpCoins());
 
         Optional<Player> playerOpt = playerService.findPlayer(playerId);
         if (playerOpt.isEmpty()) {
@@ -167,7 +171,7 @@ public class RunService {
     }
 
     public EntityResponse getMaxLevelLeaderboardByCharacterId(int size, int page, Integer characterId) {
-        Page<LeaderboardRun> leaderboard = leaderboardRunsRepository.findByCharacterIdEquals(characterId, PageRequest.of(page, size));
+        Page<LeaderboardRun> leaderboard = leaderboardRunsRepository.findByCharacterGameIdEquals(characterId, PageRequest.of(page, size));
         return mapToLeaderboardResponse(leaderboard);
     }
 
@@ -177,7 +181,7 @@ public class RunService {
                         .runId(r.getRunId())
                         .username(r.getUsername())
                         .playerId(r.getPlayerId())
-                        .characterId(r.getCharacterId())
+                        .characterId(r.getCharacterGameId())
                         .level(r.getRun().getLevel())
                         .duration(r.getRun().getDuration())
                         .boostIds(r.getRun().getBoosts().findValues("id").stream().map(JsonNode::asInt).toList())

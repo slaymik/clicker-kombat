@@ -24,8 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static ru.rsc.clicker_kombat.consts.EntityResponseFactory.getUserNotFoundResponse;
-import static ru.rsc.clicker_kombat.consts.EntityResponseFactory.getEntityResponseSuccess;
+import static ru.rsc.clicker_kombat.consts.EntityResponseFactory.*;
 import static ru.rsc.clicker_kombat.consts.PlayerConsts.NOT_HEROIC_RATING_LIMIT;
 import static ru.rsc.clicker_kombat.utils.calcs.RatingCalc.calculateRating;
 
@@ -73,7 +72,7 @@ public class PlayerService {
         return playerRepository.findByLogin(login);
     }
 
-    public void createUser(String login, String username) {
+    public Player createUser(String login, String username) {
         Player player = Player.builder()
                 .registrationDate(Instant.now())
                 .login(login)
@@ -84,6 +83,7 @@ public class PlayerService {
                 .characters(null)
                 .build();
         playerRepository.save(player);
+        return player;
     }
 
     @Transactional

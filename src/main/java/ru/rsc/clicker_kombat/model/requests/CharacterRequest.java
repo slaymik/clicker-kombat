@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Value
 public class CharacterRequest {
-    Long id;
+    Integer id;
     String name;
     UUID playerId;
     Long factionId;

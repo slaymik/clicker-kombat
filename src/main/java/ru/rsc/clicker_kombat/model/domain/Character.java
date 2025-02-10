@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -20,18 +19,17 @@ public class Character {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "character_id")
+    private Integer characterGameId;
+
     @Column(name = "character_name")
     private String name;
 
-    @Column(name = "level")
-    private Short level;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @Setter
     @Column(name = "items", columnDefinition = "jsonb")
     private JsonNode items;
-
-    @Transient
-    private UUID playerId;
 
     @ManyToOne
     @JoinColumn(name = "player_id")

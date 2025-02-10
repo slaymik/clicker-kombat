@@ -17,8 +17,8 @@ public class LeaderboardRun {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "character")
-    private Integer characterId;
+    @Column(name = "character_game_id")
+    private Integer characterGameId;
 
     @Column(name = "player_id")
     private UUID playerId;

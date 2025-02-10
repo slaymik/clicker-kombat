@@ -1,14 +1,19 @@
 package ru.rsc.clicker_kombat.utils.calcs;
 
-import ru.rsc.clicker_kombat.consts.XPConsts;
 
 public class XpCalc {
-    public static Long getAllXp(Long currentXp, Long allXp, Short currentLevel, Short neededLevel){
-        for(short i = (short) (currentLevel + 1); i <= neededLevel; i++){
-            short xpMulti = XPConsts.getXpMultiplier(i);
-            long needXp = (long) XPConsts.BASE_NEED_XP * xpMulti;
-            allXp+=needXp;
+    public static Integer getAllXp(Integer currentXp, Integer allXp, Short currentLevel, Short neededLevel) {
+        for (short i = (short) (currentLevel + 1); i <= neededLevel; i++) {
+            int needXp = calcXpRequired(i);
+            allXp += needXp;
         }
-        return allXp+currentXp;
+        return allXp + currentXp;
+    }
+
+    public static Integer calcXpRequired(Short currentLevel) {
+        if (currentLevel >= 10) {
+            return (currentLevel + 1) * (currentLevel + 1) * 10;
+        }
+        return (currentLevel +1) * 100;
     }
 }

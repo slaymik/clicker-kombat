@@ -3,6 +3,7 @@ package ru.rsc.clicker_kombat.model.responses;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.List;
 import java.util.UUID;
 
 @Value
@@ -13,5 +14,6 @@ public class PlayerResponse {
     Integer rating;
     Long rank;
     Long upCoins;
-    // List<Character>, Integer playerLevel, List<Stats>
+    List<Character> characters;
+    Integer playerLevel;
 }

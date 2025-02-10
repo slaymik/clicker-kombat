@@ -3,10 +3,10 @@ package ru.rsc.clicker_kombat.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.rsc.clicker_kombat.consts.XPConsts;
+import ru.rsc.clicker_kombat.model.domain.Character;
 import ru.rsc.clicker_kombat.model.domain.CharacterXp;
 import ru.rsc.clicker_kombat.model.requests.CharacterXpRequest;
 import ru.rsc.clicker_kombat.model.responses.EntityResponse;
-import ru.rsc.clicker_kombat.repository.CharacterRepository;
 import ru.rsc.clicker_kombat.repository.CharacterXpRepository;
 import ru.rsc.clicker_kombat.utils.calcs.XpCalc;
 
@@ -18,21 +18,20 @@ import static ru.rsc.clicker_kombat.consts.EntityResponseFactory.*;
 @RequiredArgsConstructor
 public class CharacterXpService {
     private final CharacterXpRepository characterXpRepository;
-    private final CharacterRepository characterRepository;
 
-    public EntityResponse getCharacterXp(Long id) {
-        Optional<CharacterXp> xp = characterXpRepository.findById(id);
+    public EntityResponse getCharacterXp(Integer characterId) {
+        Optional<CharacterXp> xp = characterXpRepository.findCharacterXpByCharacter_Id(characterId);
         if (xp.isPresent())
             return getEntityResponseSuccess(xp.get());
         else
-            return getCharacterNotFoundResponse(id);
+            return getCharacterNotFoundResponse(characterId);
     }
 
     public EntityResponse updateCharacterXp(CharacterXpRequest request) {
-        Optional<CharacterXp> existingXp = characterXpRepository.findById(request.getCharacterId());
+        Optional<CharacterXp> existingXp = characterXpRepository.findCharacterXpByCharacter_Id(request.getCharacterId());
         if (existingXp.isPresent()) {
             Short newLevel = request.getLevel();
-            long newXpRequirement = (long) XPConsts.BASE_NEED_XP * XPConsts.getXpMultiplier(newLevel);
+            Integer newXpRequirement = XpCalc.calcXpRequired(newLevel);
             CharacterXp updatedXp = CharacterXp.builder()
                     .character(existingXp.get().getCharacter())
                     .level(newLevel == null ? existingXp.get().getLevel() : request.getLevel())
@@ -47,39 +46,40 @@ public class CharacterXpService {
             return getCharacterNotFoundResponse(request.getCharacterId());
     }
 
-    public void createCharacterXp(Long id) {
+    public void createCharacterXp(Character character) {
         CharacterXp characterXp = CharacterXp.builder()
-                .character(characterRepository.findById(id).orElseThrow())
-                .currentXp(XPConsts.BASE_XP.longValue())
-                .allXp(XPConsts.BASE_XP.longValue())
-                .xpRequirement(XPConsts.BASE_NEED_XP.longValue())
-                .needXp(XPConsts.BASE_NEED_XP.longValue())
+                .character(character)
+                .currentXp(XPConsts.BASE_XP)
+                .allXp(XPConsts.BASE_XP)
+                .level((short) 1)
+                .xpRequirement(XpCalc.calcXpRequired((short) 1))
+                .needXp(XpCalc.calcXpRequired((short) 1))
                 .build();
         characterXpRepository.save(characterXp);
     }
 
-    public EntityResponse addXp(CharacterXpRequest request) {
-        Optional<CharacterXp> xp = characterXpRepository.findById(request.getCharacterId());
+    public EntityResponse addXp(Integer characterId, Integer addedXp) {
+        Optional<CharacterXp> xp = characterXpRepository.findById(characterId);
         if (xp.isPresent()) {
-            long newCurrentXp = xp.get().getCurrentXp() + request.getAddedXp();
-            Long xpRequirement = xp.get().getXpRequirement();
+            int newCurrentXp = xp.get().getCurrentXp() + addedXp;
+            Integer xpRequirement = xp.get().getXpRequirement();
             Short level = xp.get().getLevel();
             while (newCurrentXp >= xpRequirement) {
                 newCurrentXp -= xpRequirement;
                 level++;
-                xpRequirement = ((long) XPConsts.getXpMultiplier(level) * XPConsts.BASE_NEED_XP);
+                xpRequirement = XpCalc.calcXpRequired(level);
             }
             CharacterXp characterXp = CharacterXp.builder()
                     .character(xp.get().getCharacter())
                     .level(level)
                     .currentXp(newCurrentXp)
-                    .allXp(xp.get().getAllXp() + request.getAddedXp())
+                    .allXp(xp.get().getAllXp() + addedXp)
                     .xpRequirement(xpRequirement)
                     .needXp(xpRequirement-newCurrentXp)
                     .build();
             characterXpRepository.save(characterXp);
             return getEntityResponseSuccess(characterXp);
         } else
-            return getCharacterNotFoundResponse(request.getCharacterId());
+            return getCharacterNotFoundResponse(characterId);
     }
 }

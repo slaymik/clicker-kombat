@@ -9,24 +9,19 @@ import ru.rsc.clicker_kombat.model.responses.EntityResponse;
 import ru.rsc.clicker_kombat.services.CharacterXpService;
 
 @RestController
-@RequestMapping("character/xp")
+@RequestMapping("character-xp")
 @RequiredArgsConstructor
 public class CharacterXpController {
     private final CharacterXpService characterXpService;
 
-    @GetMapping
-    public ResponseEntity<EntityResponse> getCharacterXp(@RequestParam("id") String id){
-        return ResponseEntity.ok(characterXpService.getCharacterXp(Long.parseLong(id)));
+    @GetMapping("/get")
+    public ResponseEntity<EntityResponse> getCharacterXp(@RequestParam("characterId") Integer characterId){
+        return ResponseEntity.ok(characterXpService.getCharacterXp(characterId));
     }
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityResponse> updateCharacterXp(@RequestBody CharacterXpRequest request){
         return ResponseEntity.ok(characterXpService.updateCharacterXp(request));
-    }
-
-    @PostMapping("/add")
-    public ResponseEntity<EntityResponse> addXp(@RequestBody CharacterXpRequest request){
-        return ResponseEntity.ok(characterXpService.addXp(request));
     }
 }

@@ -25,8 +25,11 @@ public class Run {
     @Column(name = "player_id")
     private UUID playerId;
 
-    @Column(name = "character")
+    @Column(name = "character_id")
     private Integer characterId;
+
+    @Column(name = "character_game_id")
+    private Integer characterGameId;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "character_params", columnDefinition = "jsonb")
@@ -42,7 +45,7 @@ public class Run {
     private Integer shitCoins;
 
     @Column(name = "up_coins")
-    private Long runUpCoins;
+    private Integer runUpCoins;
 
     @Column(name = "enemy")
     private Integer enemy;

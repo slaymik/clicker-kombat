@@ -15,7 +15,7 @@ public class EntityResponseFactory {
     public static final String RUN_OF_OTHER_PLAYER = "Забег с id:%s принадлежит другому пользователю";
     public static final String RUN_ALREADY_FINISHED = "Забег с id:%s уже завершен";
 
-    public static EntityResponse getCharacterNotFoundResponse(Long id) {
+    public static EntityResponse getCharacterNotFoundResponse(Integer id) {
         return EntityResponse.builder()
                 .status(ERROR)
                 .message(CHARACTER_NOT_FOUND.formatted(id))
@@ -33,6 +33,13 @@ public class EntityResponseFactory {
         return EntityResponse.builder()
                 .status(SUCCESS)
                 .entity(entity)
+                .build();
+    }
+
+    public static EntityResponse getEntityResponseCustomError(String message){
+        return EntityResponse.builder()
+                .status(ERROR)
+                .message(message)
                 .build();
     }
 

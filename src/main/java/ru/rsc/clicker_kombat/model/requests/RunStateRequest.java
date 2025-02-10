@@ -10,6 +10,7 @@ public class RunStateRequest {
     Long runId;
     UUID playerId;
     Integer characterId;
+    Integer characterGameId;
     JsonNode characterParams;
     Integer level;
     Integer stage;

@@ -14,9 +14,9 @@ import java.util.UUID;
 @Repository
 public interface LeaderboardRunsRepository extends JpaRepository<LeaderboardRun, Long> {
 
-    Page<LeaderboardRun> findByCharacterIdEquals(Integer characterId, Pageable pageable);
+    Page<LeaderboardRun> findByCharacterGameIdEquals(Integer characterId, Pageable pageable);
 
-    Optional<LeaderboardRun> findByPlayerIdAndCharacterId(UUID playerId, Integer characterId);
+    Optional<LeaderboardRun> findByPlayerIdAndCharacterGameId(UUID playerId, Integer characterId);
 
     List<LeaderboardRun> findByPlayerId(UUID playerId);
 

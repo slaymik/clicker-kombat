@@ -4,10 +4,10 @@ import lombok.Value;
 
 @Value
 public class CharacterXpRequest {
-    Long characterId;
+    Integer characterId;
     Short level;
-    Long addedXp;
-    Long allXp;
-    Long xpRequirement;
-    Long needXp;
+    Integer addedXp;
+    Integer allXp;
+    Integer xpRequirement;
+    Integer needXp;
 }
