@@ -1,5 +1,6 @@
 package ru.rsc.clicker_kombat.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +15,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "character_xp")
 public class CharacterXp {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @OneToOne
     @JoinColumn(name = "character_id", referencedColumnName = "id")
+    @JsonIgnore
     private Character character;
 
     @Column(name = "level")

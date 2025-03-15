@@ -19,17 +19,16 @@ public class Character {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "character_id")
+    @Column(name = "character_game_id")
     private Integer characterGameId;
-
-    @Column(name = "character_name")
-    private String name;
-
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Setter
     @Column(name = "items", columnDefinition = "jsonb")
     private JsonNode items;
+
+    @OneToOne(mappedBy = "character")
+    private CharacterXp characterXp;
 
     @ManyToOne
     @JoinColumn(name = "player_id")

@@ -6,9 +6,10 @@ import lombok.Value;
 import java.util.List;
 
 @Value
-public class UserCredentialsRequest {
-    String username;
-    String password;
-    String playerName;
+public class CreateCharactersRequest {
+    String playerId;
     List<Character> characters;
+
+    public record Character(Integer characterGameId, JsonNode items) {
+    }
 }

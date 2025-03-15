@@ -26,8 +26,6 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
     private final PlayerService playerService;
-    private final CharacterService characterService;
-
 
     @PostMapping("/create")
     public ResponseEntity<ActionResult> createUser(@RequestBody UserCredentialsRequest request) {
@@ -42,8 +40,7 @@ public class UserController {
 
         if (actionResult.getIsSuccess()) {
             log.info(actionResult.getMessage());
-            Player player = playerService.createUser(request.getUsername(), request.getPlayerName());
-            characterService.createAllCharactersForPlayer(player.getId(), request.getCharacters());
+            playerService.createUser(request.getUsername(), request.getPlayerName());
         } else {
             log.error(actionResult.getMessage());
         }
@@ -51,13 +48,4 @@ public class UserController {
         return ResponseEntity.ok(actionResult);
     }
 
-    @PostMapping("/create-characters")
-    public ResponseEntity<ActionResult> createCharacters(@RequestBody CreateCharactersRequest request) {
-        characterService.createAllCharactersForPlayer(UUID.fromString(request.playerId()), request.characters());
-        return ResponseEntity.ok(new ActionResult(true, "Все заебись!"));
-    }
-
-    public record CreateCharactersRequest(String playerId, List<UserCredentialsRequest.Character> characters) {
-
-    }
 }

@@ -59,21 +59,26 @@ public class CharacterXpService {
     }
 
     public EntityResponse addXp(Integer characterId, Integer addedXp) {
-        Optional<CharacterXp> xp = characterXpRepository.findById(characterId);
-        if (xp.isPresent()) {
-            int newCurrentXp = xp.get().getCurrentXp() + addedXp;
-            Integer xpRequirement = xp.get().getXpRequirement();
-            Short level = xp.get().getLevel();
+        Optional<CharacterXp> xpOpt = characterXpRepository.findById(characterId);
+        if (xpOpt.isPresent()) {
+            CharacterXp xp = xpOpt.get();
+            int newCurrentXp = xp.getCurrentXp() + addedXp;
+            Integer xpRequirement = xp.getXpRequirement();
+            Short level = xp.getLevel();
             while (newCurrentXp >= xpRequirement) {
                 newCurrentXp -= xpRequirement;
                 level++;
+                if(level == 50){
+                    newCurrentXp = xpRequirement;
+                }
                 xpRequirement = XpCalc.calcXpRequired(level);
             }
             CharacterXp characterXp = CharacterXp.builder()
-                    .character(xp.get().getCharacter())
+                    .id(xp.getId())
+                    .character(xp.getCharacter())
                     .level(level)
                     .currentXp(newCurrentXp)
-                    .allXp(xp.get().getAllXp() + addedXp)
+                    .allXp(level == 50 ? xp.getAllXp() : xp.getAllXp() + addedXp)
                     .xpRequirement(xpRequirement)
                     .needXp(xpRequirement-newCurrentXp)
                     .build();

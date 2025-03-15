@@ -60,6 +60,8 @@ public class PlayerService {
                     .rating(rating)
                     .rank(rank)
                     .upCoins(player.getUpCoins())
+                    .characters(player.getCharacters())
+                    .playerLevel(1)
                     .build());
         }
     }

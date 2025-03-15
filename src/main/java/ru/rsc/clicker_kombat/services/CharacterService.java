@@ -3,6 +3,7 @@ package ru.rsc.clicker_kombat.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,13 @@ import ru.rsc.clicker_kombat.model.domain.Character;
 import ru.rsc.clicker_kombat.model.domain.Player;
 import ru.rsc.clicker_kombat.model.requests.BuyItemRequest;
 import ru.rsc.clicker_kombat.model.requests.CharacterRequest;
-import ru.rsc.clicker_kombat.model.requests.UserCredentialsRequest;
+import ru.rsc.clicker_kombat.model.requests.CreateCharactersRequest;
 import ru.rsc.clicker_kombat.model.responses.ActionResult;
 import ru.rsc.clicker_kombat.model.responses.EntityResponse;
-import ru.rsc.clicker_kombat.repository.*;
+import ru.rsc.clicker_kombat.repository.CharacterRepository;
+import ru.rsc.clicker_kombat.repository.PlayerRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +38,6 @@ public class CharacterService {
         Optional<Player> user = playerRepository.findById(playerId);
         if (user.isPresent()) {
             Character character = Character.builder()
-                    .name(characterName)
                     .player(user.get())
                     .build();
             characterRepository.save(character);
@@ -77,7 +79,6 @@ public class CharacterService {
         Optional<Character> existingCharacter = characterRepository.findById(request.getId());
         if (existingCharacter.isPresent()) {
             Character updatedCharacter = Character.builder()
-                    .name(request.getName() == null ? existingCharacter.get().getName() : request.getName())
                     .player(existingCharacter.get().getPlayer())
                     .build();
             characterRepository.save(updatedCharacter);
@@ -86,14 +87,19 @@ public class CharacterService {
             return getCharacterNotFoundResponse(request.getId());
     }
 
-    public void createAllCharactersForPlayer(UUID playerId, List<UserCredentialsRequest.Character> characters) {
+    public void createAllCharactersForPlayer(UUID playerId, List<CreateCharactersRequest.Character> characters) {
         Optional<Player> user = playerRepository.findById(playerId);
         if (user.isPresent()) {
-            for (UserCredentialsRequest.Character characterRequest : characters) {
+            for (CreateCharactersRequest.Character characterRequest : characters) {
+                Optional<Character> existedCharacter = characterRepository
+                        .getCharacterByPlayer_IdAndCharacterGameId(user.get().getId(), characterRequest.characterGameId());
+                if (existedCharacter.isPresent()) {
+                    continue;
+                }
+
                 Character character = Character.builder()
                         .player(user.get())
-                        .characterGameId(characterRequest.characterId())
-                        .name(characterRequest.name())
+                        .characterGameId(characterRequest.characterGameId())
                         .items(characterRequest.items())
                         .build();
                 characterRepository.save(character);
@@ -110,7 +116,7 @@ public class CharacterService {
         }
 
         Character character = characterOptional.get();
-        Optional<Player> playerOptional = playerRepository.findById(characterOptional.get().getPlayer().getId());
+        Optional<Player> playerOptional = playerRepository.findById(character.getPlayer().getId());
         if (playerOptional.isEmpty()) {
             return new ActionResult(false, "Пользователь не найден");
         }
@@ -120,17 +126,30 @@ public class CharacterService {
             return new ActionResult(false, "Недостаточно up coins");
         }
 
-        player.setUpCoins(player.getUpCoins() - request.getPrice());
         ArrayNode items = (ArrayNode) character.getItems();
+        List<JsonNode> newItems = new ArrayList<>();
+        boolean itemFound = false;
+
         for (JsonNode item : items) {
-            if (item.get("itemId").asInt() == request.getItemId()) {
-                ObjectNode itemNode = (ObjectNode) item;
+            ObjectNode itemNode = (ObjectNode) item;
+            if (item.get("id").asInt() == request.getItemId()) {
                 IntNode level = new IntNode(itemNode.findValue("level").asInt() + 1);
                 itemNode.set("level", level);
-                characterRepository.save(character);
-                break;
+                itemFound = true;
             }
+            newItems.add(itemNode);
         }
-        return new ActionResult(true, "Успех!");
+
+        if (itemFound) {
+            try {
+                characterRepository.updateItems(character.getId(), new ArrayNode(JsonNodeFactory.instance, newItems));
+                player.setUpCoins(player.getUpCoins() - request.getPrice());
+                return new ActionResult(true, "Предмет улучшен!");
+            } catch (Exception e) {
+                return new ActionResult(false, "Ошибка во время улучшения предмета");
+            }
+        } else {
+            return new ActionResult(false, "Предмет для улучшения не найден");
+        }
     }
 }
