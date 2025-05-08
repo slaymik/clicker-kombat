@@ -181,7 +181,7 @@ public class RunService {
                         .runId(r.getRunId())
                         .username(r.getUsername())
                         .playerId(r.getPlayerId())
-                        .characterId(r.getCharacterGameId())
+                        .characterGameId(r.getCharacterGameId())
                         .level(r.getRun().getLevel())
                         .duration(r.getRun().getDuration())
                         .boostIds(r.getRun().getBoosts().findValues("id").stream().map(JsonNode::asInt).toList())

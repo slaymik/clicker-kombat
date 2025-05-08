@@ -12,7 +12,7 @@ public class LeaderboardResponse {
     Long runId;
     String username;
     UUID playerId;
-    Integer characterId;
+    Integer characterGameId;
     Integer level;
     Integer duration;
     List<Integer> boostIds;
